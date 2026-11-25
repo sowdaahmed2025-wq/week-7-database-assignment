@@ -1,26 +1,16 @@
+
 -- Week 7 Assignment: Database Design and Normalization
+-- Student Name: Sowda Ahmed
+-- Date: 2026-11-25
 
 CREATE DATABASE IF NOT EXISTS week7_db;
 USE week7_db;
 
--- =====================================================
--- Question 1: Achieving First Normal Form (1NF)
--- =====================================================
+-- ==========================================
+-- QUESTION 1: ACHIEVING FIRST NORMAL FORM (1NF)
+-- ==========================================
 
--- Original table (violates 1NF: multiple values in Products)
-DROP TABLE IF EXISTS ProductDetail;
-CREATE TABLE ProductDetail (
-    OrderID INT,
-    CustomerName VARCHAR(50),
-    Products VARCHAR(100)
-);
-
-INSERT INTO ProductDetail (OrderID, CustomerName, Products) VALUES
-(101, 'John Doe', 'Laptop, Mouse'),
-(102, 'Jane Smith', 'Tablet, Keyboard, Mouse'),
-(103, 'Emily Clark', 'Phone');
-
--- 1NF table: one product per row
+-- Create your normalized table(s) below
 DROP TABLE IF EXISTS ProductDetail_1NF;
 CREATE TABLE ProductDetail_1NF (
     OrderID INT,
@@ -29,6 +19,7 @@ CREATE TABLE ProductDetail_1NF (
     PRIMARY KEY (OrderID, Product)
 );
 
+-- Insert your records below
 INSERT INTO ProductDetail_1NF (OrderID, CustomerName, Product) VALUES
 (101, 'John Doe', 'Laptop'),
 (101, 'John Doe', 'Mouse'),
@@ -37,11 +28,41 @@ INSERT INTO ProductDetail_1NF (OrderID, CustomerName, Product) VALUES
 (102, 'Jane Smith', 'Mouse'),
 (103, 'Emily Clark', 'Phone');
 
-SELECT * FROM ProductDetail_1NF;
-
--- =====================================================
--- Question 2: Achieving Second Normal Form (2NF)
--- =====================================================
+-- ==========================================
+-- QUESTION 2: ACHIEVING SECOND NORMAL FORM (2NF)
+-- ==========================================
 
 -- Partial dependency: CustomerName depends only on OrderID,
--- not on
+-- not on the full composite key (OrderID, Product).
+
+-- Create your Orders table below
+DROP TABLE IF EXISTS OrderItems;
+DROP TABLE IF EXISTS Orders;
+
+CREATE TABLE Orders (
+    OrderID INT PRIMARY KEY,
+    CustomerName VARCHAR(50)
+);
+
+-- Create your OrderItems table below
+CREATE TABLE OrderItems (
+    OrderID INT,
+    Product VARCHAR(50),
+    Quantity INT,
+    PRIMARY KEY (OrderID, Product),
+    FOREIGN KEY (OrderID) REFERENCES Orders(OrderID)
+);
+
+-- Insert your records below
+INSERT INTO Orders (OrderID, CustomerName) VALUES
+(101, 'John Doe'),
+(102, 'Jane Smith'),
+(103, 'Emily Clark');
+
+INSERT INTO OrderItems (OrderID, Product, Quantity) VALUES
+(101, 'Laptop', 2),
+(101, 'Mouse', 1),
+(102, 'Tablet', 3),
+(102, 'Keyboard', 1),
+(102, 'Mouse', 2),
+(103, 'Phone', 1);
